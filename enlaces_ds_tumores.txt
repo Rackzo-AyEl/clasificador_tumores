@@ -1,0 +1,17 @@
+Explicación de tumores:
+https://www.mayoclinic.org/es/diseases-conditions/brain-tumor/symptoms-causes/syc-20350084
+
+Enlaces de datasets:
+https://www.kaggle.com/datasets/tombackert/brain-tumor-mri-data
+
+https://www.kaggle.com/datasets/rm1000/brain-tumor-mri-scans?select=healthy
+
+https://www.kaggle.com/datasets/sartajbhuvaji/brain-tumor-classification-mri
+
+https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset
+
+
+Papers y noticias:
+https://www.scielo.org.mx/scielo.php?script=sci_arttext&pid=S2448-60942022000100206
+
+https://www.gob.mx/insabi/articulos/8-de-junio-dia-internacional-de-los-tumores-cerebrales
