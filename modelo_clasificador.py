@@ -12,51 +12,51 @@ import numpy as np
 
 
 def evaluar_modelo_estricto(device, modelo, dataloader_test):
-    print(Fore.YELLOW + "\n[!] " + Style.RESET_ALL + "Generando métricas estrictas (F1-Score y Matriz)...")
-    
-    modelo.eval() # Modo evaluación
+    print(Fore.YELLOW + "\n[!] " + Style.RESET_ALL +
+          "Generando métricas estrictas (F1-Score y Matriz)...")
+
+    modelo.eval()  # Modo evaluación
     etiquetas_reales = []
     predicciones = []
 
     with torch.no_grad():
         for caracteristicas, etiquetas in dataloader_test:
             caracteristicas = caracteristicas.to(device)
-            
+
             # Obtener las salidas de la red
             salidas = modelo(caracteristicas)
-            
+
             # torch.max devuelve el valor máximo y su índice (que es la clase predicha)
-            _, preds = torch.max(salidas, 1) 
-            
+            _, preds = torch.max(salidas, 1)
+
             # Guardamos resultados pasándolos de vuelta a la CPU y a Numpy
             etiquetas_reales.extend(etiquetas.view(-1).numpy())
             predicciones.extend(preds.cpu().numpy())
 
-    # Calcular F1-Score usando 'macro' 
-    # (Macro es el más estricto: saca el F1 de cada clase por separado y luego los promedia, 
+    # Calcular F1-Score usando 'macro'
+    # (Macro es el más estricto: saca el F1 de cada clase por separado y luego los promedia,
     # penalizando fuertemente si el modelo es malo en una sola clase).
     f1 = f1_score(etiquetas_reales, predicciones, average='macro')
     print(Fore.GREEN + f"[+] F1-Score (Macro): {f1:.4f}" + Style.RESET_ALL)
 
     # Generar Matriz de Confusión
     cm = confusion_matrix(etiquetas_reales, predicciones)
-    
+
     # Dibujar la matriz
     plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
-                xticklabels=['Clase 0', 'Clase 1', 'Clase 2', 'Clase 3'], 
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=['Clase 0', 'Clase 1', 'Clase 2', 'Clase 3'],
                 yticklabels=['Clase 0', 'Clase 1', 'Clase 2', 'Clase 3'])
-    
+
     plt.title(f'Matriz de Confusión | F1-Score (Macro): {f1:.4f}', pad=20)
     plt.xlabel('Predicción del Modelo')
     plt.ylabel('Etiqueta Real (Ground Truth)')
-    
+
     # Rotar las etiquetas para que se lean bien
     plt.xticks(rotation=45)
     plt.yticks(rotation=0)
     plt.tight_layout()
     plt.show()
-
 
 
 # Funcion de entrenamiento
@@ -76,10 +76,11 @@ def entrenamiento_modelo(device, modelo, dataloader_train, dataloader_test):
     for epoca in range(epocas):
         modelo.train()
         loss_train_acumulado = 0.0
-    
+
         for caracteristicas, etiquetas in dataloader_train:
-            caracteristicas, etiquetas = caracteristicas.to(device), etiquetas.to(device)
-        
+            caracteristicas, etiquetas = caracteristicas.to(
+                device), etiquetas.to(device)
+
             etiquetas = etiquetas.to(device).view(-1).long()
 
             optimizador.zero_grad()
@@ -87,9 +88,9 @@ def entrenamiento_modelo(device, modelo, dataloader_train, dataloader_test):
             loss = criterio(salidas, etiquetas)
             loss.backward()
             optimizador.step()
-        
+
             loss_train_acumulado += loss.item() * caracteristicas.size(0)
-        
+
         loss_promedio_train = loss_train_acumulado / len(dataset_train)
         historial_loss_train.append(loss_promedio_train)
 
@@ -98,7 +99,8 @@ def entrenamiento_modelo(device, modelo, dataloader_train, dataloader_test):
         loss_test_acumulado = 0.0
         with torch.no_grad():
             for caracteristicas, etiquetas in dataloader_test:
-                caracteristicas, etiquetas = caracteristicas.to(device), etiquetas.to(device)
+                caracteristicas, etiquetas = caracteristicas.to(
+                    device), etiquetas.to(device)
                 salidas = modelo(caracteristicas)
                 loss = criterio(salidas, etiquetas)
                 loss_test_acumulado += loss.item() * caracteristicas.size(0)
@@ -107,7 +109,8 @@ def entrenamiento_modelo(device, modelo, dataloader_train, dataloader_test):
         historial_loss_test.append(loss_promedio_test)
 
         if (epoca + 1) % 5 == 0:
-            print(f"Época {epoca+1:02d}/{epocas} | Loss Train: {loss_promedio_train:.4f} | Loss Test: {loss_promedio_test:.4f}")
+            print(f"Época {epoca+1:02d}/{epocas} | Loss Train: {
+                  loss_promedio_train:.4f} | Loss Test: {loss_promedio_test:.4f}")
 
     # 7. Graficar resultados
     plt.figure(figsize=(8, 5))
@@ -119,6 +122,7 @@ def entrenamiento_modelo(device, modelo, dataloader_train, dataloader_test):
     plt.legend()
     plt.grid(True)
     plt.show()
+
 
 # Inicio de código
 if __name__ == '__main__':
@@ -151,7 +155,7 @@ if __name__ == '__main__':
         nn.BatchNorm1d(128),
         nn.ReLU(),
         nn.Dropout(0.8),
-        
+
         nn.Linear(128, 4)
     ).to(device)
 
