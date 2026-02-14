@@ -1,9 +1,12 @@
 # Librerías
 from colorama import Fore, Style
+from sklearn.metrics import confusion_matrix, f1_score
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from torchvision.models import resnet50, ResNet50_Weights
 import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -43,7 +46,7 @@ def cargar_imagenes(ruta, training):
 def entrenar_modelo(dataset_train, dataset_test, device, modelo):
     # Crear variables de optimización
     criterio = nn.CrossEntropyLoss()
-    optimizador = optim.Adam(modelo.parameters(), lr=0.0001)
+    optimizador = optim.Adam(modelo.parameters(), lr=0.001)
 
     historial_loss_train = []
     historial_loss_test = []
@@ -52,7 +55,7 @@ def entrenar_modelo(dataset_train, dataset_test, device, modelo):
     print("Iniciando entrenamiento de modelo...")
 
     # Ciclo de entrenamiento de red
-    epocas = 30
+    epocas = 70
 
     for epoca in range(epocas):
         modelo.train()
@@ -69,8 +72,10 @@ def entrenar_modelo(dataset_train, dataset_test, device, modelo):
             # Pasar imágenes por toda resnet50
             salidas = modelo(imagenes)
 
+            # Calcular error
             loss = criterio(salidas, etiquetas)
             loss.backward()
+            # Ajustar pesos
             optimizador.step()
 
             loss_train_acumulado += loss.item() * imagenes.size(0)
@@ -101,6 +106,54 @@ def entrenar_modelo(dataset_train, dataset_test, device, modelo):
     plt.plot(historial_loss_train, label='Train')
     plt.plot(historial_loss_test, label='Test')
     plt.legend()
+    plt.show()
+
+    # Medir desempeño de modelo
+    evaluar_modelo_final(device, modelo, dataloader_test, dataset_test.classes)
+
+    # Guardar modelo
+    ruta_guardado = 'modelo_tumores_resnet50.pth'
+    torch.save(modelo.state_dict(), ruta_guardado)
+
+    print(Fore.GREEN + "\n[+] " + Style.RESET_ALL, end='')
+    print(f"Modelo guardado en {ruta_guardado}")
+
+
+# Funcion de evaluación de modelo
+def evaluar_modelo_final(device, modelo, dataloader_test, nombres_clases):
+    print(Fore.YELLOW + "\n[!] " + Style.RESET_ALL +
+          "Generando métricas finales...")
+
+    modelo.eval()
+    etiquetas_reales = []
+    predicciones = []
+
+    with torch.no_grad():
+        for imagenes, etiquetas in dataloader_test:
+            imagenes = imagenes.to(device)
+            salidas = modelo(imagenes)
+            _, preds = torch.max(salidas, 1)
+
+            etiquetas_reales.extend(etiquetas.view(-1).numpy())
+            predicciones.extend(preds.cpu().numpy())
+
+    # F1-Score
+    f1 = f1_score(etiquetas_reales, predicciones, average='macro')
+    print(Fore.GREEN + f"[+] F1-Score (Macro): {f1:.4f}" + Style.RESET_ALL)
+
+    # Matriz de Confusión
+    cm = confusion_matrix(etiquetas_reales, predicciones)
+
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=nombres_clases,
+                yticklabels=nombres_clases)
+
+    plt.title(f'Rendimiento Final del Modelo | F1-Score: {f1:.4f}', pad=20)
+    plt.xlabel('Predicción de la Red')
+    plt.ylabel('Diagnóstico Real (Ground Truth)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
     plt.show()
 
 
