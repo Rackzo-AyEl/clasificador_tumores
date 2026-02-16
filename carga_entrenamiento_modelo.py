@@ -46,7 +46,12 @@ def cargar_imagenes(ruta, training):
 def entrenar_modelo(dataset_train, dataset_test, device, modelo):
     # Crear variables de optimización
     criterio = nn.CrossEntropyLoss()
-    optimizador = optim.Adam(modelo.parameters(), lr=0.001)
+    optimizador = optim.Adam([
+        # Nivel tortuga para no romper ImageNet
+        {'params': modelo.layer4.parameters(), 'lr': 1e-5},
+        # Nivel normal para tu clasificador
+        {'params': modelo.fc.parameters(), 'lr': 1e-4}
+    ], weight_decay=1e-4)
 
     historial_loss_train = []
     historial_loss_test = []
@@ -55,7 +60,7 @@ def entrenar_modelo(dataset_train, dataset_test, device, modelo):
     print("Iniciando entrenamiento de modelo...")
 
     # Ciclo de entrenamiento de red
-    epocas = 70
+    epocas = 50
 
     for epoca in range(epocas):
         modelo.train()
@@ -166,7 +171,7 @@ if __name__ == '__main__':
     # Crear dataloaders
     dataloader_train = DataLoader(
         dataset_train,
-        batch_size=64,
+        batch_size=32,
         shuffle=True,
         num_workers=2
     )
@@ -187,6 +192,10 @@ if __name__ == '__main__':
     # Congelar gradientes en modelo
     for param in modelo.parameters():
         param.requires_grad = False
+
+    # Descongelar solo el último bloque convolucional
+    for param in modelo.layer4.parameters():
+        param.requires_grad = True
 
     # Reemplazar capa fc
     modelo.fc = nn.Sequential(
