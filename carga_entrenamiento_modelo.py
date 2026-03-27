@@ -5,7 +5,6 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from torchvision.models import resnet50, ResNet50_Weights
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
 import torch
 import torch.nn as nn
@@ -43,10 +42,12 @@ def cargar_imagenes(ruta, training):
 
 
 # Función de entrenamiento
-def entrenar_modelo(dataset_train, dataset_test, device, modelo):
+def entrenar_modelo(dataloader_train, dataloader_test, device, modelo, nombres_clases):
     # Crear variables de optimización
     criterio = nn.CrossEntropyLoss()
     optimizador = optim.Adam([
+        # Nivel tortuga para no romper ImageNet
+        {'params': modelo.layer3.parameters(), 'lr': 1e-6},
         # Nivel tortuga para no romper ImageNet
         {'params': modelo.layer4.parameters(), 'lr': 1e-5},
         # Nivel normal para tu clasificador
@@ -114,7 +115,7 @@ def entrenar_modelo(dataset_train, dataset_test, device, modelo):
     plt.show()
 
     # Medir desempeño de modelo
-    evaluar_modelo_final(device, modelo, dataloader_test, dataset_test.classes)
+    evaluar_modelo_final(device, modelo, dataloader_test, nombres_clases)
 
     # Guardar modelo
     ruta_guardado = 'modelo_tumores_resnet50.pth'
@@ -196,6 +197,8 @@ if __name__ == '__main__':
     # Descongelar solo el último bloque convolucional
     for param in modelo.layer4.parameters():
         param.requires_grad = True
+    for param in modelo.layer3.parameters():
+        param.requires_grad = True
 
     # Reemplazar capa fc
     modelo.fc = nn.Sequential(
@@ -225,4 +228,5 @@ if __name__ == '__main__':
     modelo.to(device)
 
     # Llamar a función para entrenar modelo
-    entrenar_modelo(dataset_train, dataset_test, device, modelo)
+    entrenar_modelo(dataloader_train, dataloader_test,
+                    device, modelo, dataset_test.classes)
