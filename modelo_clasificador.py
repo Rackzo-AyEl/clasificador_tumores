@@ -1,165 +1,232 @@
 # Librerías
 from colorama import Fore, Style
-from torch.utils.data import TensorDataset, DataLoader
+from sklearn.metrics import confusion_matrix, f1_score
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+from torchvision.models import resnet50, ResNet50_Weights
 import matplotlib.pyplot as plt
+import seaborn as sns
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from sklearn.metrics import f1_score, confusion_matrix
-import seaborn as sns
-import numpy as np
+
+# Función para cargar imágenes
+def cargar_imagenes(ruta, training):
+    # Imágenes para train
+    print(Fore.CYAN + "[*] " + Style.RESET_ALL, end='')
+    print(f"Cargando y transformando imágenes de carpeta {ruta}")
+
+    # Transformaciones matriciales para data augmentation
+    if training:
+        transformaciones = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomRotation(degrees=10),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+                                 0.229, 0.224, 0.225])
+        ])
+
+    # Carga normal de datos para ResNet50
+    else:
+        transformaciones = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+                                 0.229, 0.224, 0.225])
+        ])
+
+    # Devolver dataset con transformaciones de imágenes aplicadas
+    return datasets.ImageFolder(root=ruta, transform=transformaciones)
 
 
-def evaluar_modelo_estricto(device, modelo, dataloader_test):
-    print(Fore.YELLOW + "\n[!] " + Style.RESET_ALL +
-          "Generando métricas estrictas (F1-Score y Matriz)...")
-
-    modelo.eval()  # Modo evaluación
-    etiquetas_reales = []
-    predicciones = []
-
-    with torch.no_grad():
-        for caracteristicas, etiquetas in dataloader_test:
-            caracteristicas = caracteristicas.to(device)
-
-            # Obtener las salidas de la red
-            salidas = modelo(caracteristicas)
-
-            # torch.max devuelve el valor máximo y su índice (que es la clase predicha)
-            _, preds = torch.max(salidas, 1)
-
-            # Guardamos resultados pasándolos de vuelta a la CPU y a Numpy
-            etiquetas_reales.extend(etiquetas.view(-1).numpy())
-            predicciones.extend(preds.cpu().numpy())
-
-    # Calcular F1-Score usando 'macro'
-    # (Macro es el más estricto: saca el F1 de cada clase por separado y luego los promedia,
-    # penalizando fuertemente si el modelo es malo en una sola clase).
-    f1 = f1_score(etiquetas_reales, predicciones, average='macro')
-    print(Fore.GREEN + f"[+] F1-Score (Macro): {f1:.4f}" + Style.RESET_ALL)
-
-    # Generar Matriz de Confusión
-    cm = confusion_matrix(etiquetas_reales, predicciones)
-
-    # Dibujar la matriz
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
-                xticklabels=['Clase 0', 'Clase 1', 'Clase 2', 'Clase 3'],
-                yticklabels=['Clase 0', 'Clase 1', 'Clase 2', 'Clase 3'])
-
-    plt.title(f'Matriz de Confusión | F1-Score (Macro): {f1:.4f}', pad=20)
-    plt.xlabel('Predicción del Modelo')
-    plt.ylabel('Etiqueta Real (Ground Truth)')
-
-    # Rotar las etiquetas para que se lean bien
-    plt.xticks(rotation=45)
-    plt.yticks(rotation=0)
-    plt.tight_layout()
-    plt.show()
-
-
-# Funcion de entrenamiento
-def entrenamiento_modelo(device, modelo, dataloader_train, dataloader_test):
-    # Parámetros de aprendizaje de modelo
-    optimizador = optim.Adam(modelo.parameters(), lr=0.0001)
+# Función de entrenamiento
+def entrenar_modelo(dataloader_train, dataloader_test, device, modelo, nombres_clases):
+    # Crear variables de optimización
     criterio = nn.CrossEntropyLoss()
+    optimizador = optim.Adam([
+        # Nivel tortuga para no romper ImageNet
+        {'params': modelo.layer3.parameters(), 'lr': 1e-6},
+        # Nivel tortuga para no romper ImageNet
+        {'params': modelo.layer4.parameters(), 'lr': 1e-5},
+        # Nivel normal para tu clasificador
+        {'params': modelo.fc.parameters(), 'lr': 1e-4}
+    ], weight_decay=1e-4)
 
-    # Ciclo de entrenamiento de modelo
-    epocas = 70
     historial_loss_train = []
     historial_loss_test = []
 
     print(Fore.YELLOW + "\n[!] " + Style.RESET_ALL, end='')
-    print("Iniciando entrenamiento...")
+    print("Iniciando entrenamiento de modelo...")
+
+    # Ciclo de entrenamiento de red
+    epocas = 50
 
     for epoca in range(epocas):
         modelo.train()
         loss_train_acumulado = 0.0
 
-        for caracteristicas, etiquetas in dataloader_train:
-            caracteristicas, etiquetas = caracteristicas.to(
-                device), etiquetas.to(device)
+        for imagenes, etiquetas in dataloader_train:
+            # Mover datos a GPU
+            imagenes = imagenes.to(device)
+            etiquetas = etiquetas.to(device)
 
-            etiquetas = etiquetas.to(device).view(-1).long()
-
+            # Establecer gradiente en cero
             optimizador.zero_grad()
-            salidas = modelo(caracteristicas)
+
+            # Pasar imágenes por toda resnet50
+            salidas = modelo(imagenes)
+
+            # Calcular error
             loss = criterio(salidas, etiquetas)
             loss.backward()
+            # Ajustar pesos
             optimizador.step()
 
-            loss_train_acumulado += loss.item() * caracteristicas.size(0)
+            loss_train_acumulado += loss.item() * imagenes.size(0)
 
-        loss_promedio_train = loss_train_acumulado / len(dataset_train)
+        tamanno_dataloader_train = len(dataloader_train.dataset)
+        loss_promedio_train = loss_train_acumulado / tamanno_dataloader_train
         historial_loss_train.append(loss_promedio_train)
 
-        # Fase de Validación
         modelo.eval()
         loss_test_acumulado = 0.0
-        with torch.no_grad():
-            for caracteristicas, etiquetas in dataloader_test:
-                caracteristicas, etiquetas = caracteristicas.to(
-                    device), etiquetas.to(device)
-                salidas = modelo(caracteristicas)
-                loss = criterio(salidas, etiquetas)
-                loss_test_acumulado += loss.item() * caracteristicas.size(0)
 
-        loss_promedio_test = loss_test_acumulado / len(dataset_test)
+        with torch.no_grad():
+            for imagenes, etiquetas in dataloader_test:
+                imagenes = imagenes.to(device)
+                etiquetas = etiquetas.to(device).view(-1).long()
+
+                salidas = modelo(imagenes)
+                loss = criterio(salidas, etiquetas)
+                loss_test_acumulado += loss.item() * imagenes.size(0)
+
+        loss_promedio_test = loss_test_acumulado / len(dataloader_test.dataset)
         historial_loss_test.append(loss_promedio_test)
 
-        if (epoca + 1) % 5 == 0:
-            print(f"Época {epoca+1:02d}/{epocas} | Loss Train: {
-                  loss_promedio_train:.4f} | Loss Test: {loss_promedio_test:.4f}")
+        print(f"Época {epoca+1:02d}/{epocas} | Loss Train: {
+              loss_promedio_train:.4f} | Loss Test: {loss_promedio_test:.4f}")
 
-    # 7. Graficar resultados
-    plt.figure(figsize=(8, 5))
-    plt.plot(historial_loss_train, label='Entrenamiento', marker='.')
-    plt.plot(historial_loss_test, label='Validación', marker='.')
-    plt.title('Curva de Aprendizaje con Caché de Características')
-    plt.xlabel('Época')
-    plt.ylabel('Pérdida')
+    # Graficar (Opcional para pruebas cortas)
+    plt.plot(historial_loss_train, label='Train')
+    plt.plot(historial_loss_test, label='Test')
     plt.legend()
-    plt.grid(True)
+    plt.show()
+
+    # Medir desempeño de modelo
+    evaluar_modelo_final(device, modelo, dataloader_test, nombres_clases)
+
+    # Guardar modelo
+    ruta_guardado = 'modelo_tumores_resnet50.pth'
+    torch.save(modelo.state_dict(), ruta_guardado)
+
+    print(Fore.GREEN + "\n[+] " + Style.RESET_ALL, end='')
+    print(f"Modelo guardado en {ruta_guardado}")
+
+
+# Funcion de evaluación de modelo
+def evaluar_modelo_final(device, modelo, dataloader_test, nombres_clases):
+    print(Fore.YELLOW + "\n[!] " + Style.RESET_ALL +
+          "Generando métricas finales...")
+
+    modelo.eval()
+    etiquetas_reales = []
+    predicciones = []
+
+    with torch.no_grad():
+        for imagenes, etiquetas in dataloader_test:
+            imagenes = imagenes.to(device)
+            salidas = modelo(imagenes)
+            _, preds = torch.max(salidas, 1)
+
+            etiquetas_reales.extend(etiquetas.view(-1).numpy())
+            predicciones.extend(preds.cpu().numpy())
+
+    # F1-Score
+    f1 = f1_score(etiquetas_reales, predicciones, average='macro')
+    print(Fore.GREEN + f"[+] F1-Score (Macro): {f1:.4f}" + Style.RESET_ALL)
+
+    # Matriz de Confusión
+    cm = confusion_matrix(etiquetas_reales, predicciones)
+
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=nombres_clases,
+                yticklabels=nombres_clases)
+
+    plt.title(f'Rendimiento Final del Modelo | F1-Score: {f1:.4f}', pad=20)
+    plt.xlabel('Predicción de la Red')
+    plt.ylabel('Diagnóstico Real (Ground Truth)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
     plt.show()
 
 
 # Inicio de código
 if __name__ == '__main__':
-    # Cargar vectores de características preprocesadas
-    path_train = 'features/features_train.pt'
-    path_test = 'features/features_test.pt'
+    # Cargar imágenes de entrenamiento con sus respectivas transformaciones
+    dataset_train = cargar_imagenes('train/', True)
+    dataset_test = cargar_imagenes('test/', False)
 
-    x_train, y_train = torch.load(path_train)
-    x_test, y_test = torch.load(path_test)
-
-    print(Fore.CYAN + "\n[*] " + Style.RESET_ALL, end='')
-    print("Vectores de características cargados correctamente")
+    # Crear dataloaders
+    dataloader_train = DataLoader(
+        dataset_train,
+        batch_size=32,
+        shuffle=True,
+        num_workers=2
+    )
+    dataloader_test = DataLoader(
+        dataset_test,
+        batch_size=256,
+        num_workers=2
+    )
 
     # Verificar disponibilidad de GPU
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(Fore.CYAN + "[*] " + Style.RESET_ALL, end='')
     print(f"Usando dispositivo {torch.cuda.get_device_name()}")
 
-    # Generar datasets
-    dataset_train = TensorDataset(x_train, y_train)
-    dataset_test = TensorDataset(x_test, y_test)
+    # Cargar resnet50 con sus pesos
+    modelo = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
 
-    # Generar dataloaders
-    dataloader_train = DataLoader(dataset_train, batch_size=128, shuffle=True)
-    dataloader_test = DataLoader(dataset_test, batch_size=128)
+    # Congelar gradientes en modelo
+    for param in modelo.parameters():
+        param.requires_grad = False
 
-    # Crear modelo
-    modelo = nn.Sequential(
-        nn.Linear(2048, 128),
+    # Descongelar solo el último bloque convolucional
+    for param in modelo.layer4.parameters():
+        param.requires_grad = True
+    for param in modelo.layer3.parameters():
+        param.requires_grad = True
+
+    # Reemplazar capa fc
+    modelo.fc = nn.Sequential(
+        # Capa de entrada
+        nn.Linear(2048, 256),
+        nn.BatchNorm1d(256),
+        nn.ReLU(),
+        nn.Dropout(p=0.6),
+
+        # Primera capa oculta
+        nn.Linear(256, 128),
         nn.BatchNorm1d(128),
         nn.ReLU(),
-        nn.Dropout(0.8),
+        nn.Dropout(p=0.6),
 
-        nn.Linear(128, 4)
-    ).to(device)
+        # Segunda capa oculta
+        nn.Linear(128, 64),
+        nn.BatchNorm1d(64),
+        nn.ReLU(),
+        nn.Dropout(p=0.6),
 
-    # Llamada a función de entrenamiento
-    entrenamiento_modelo(device, modelo, dataloader_train, dataloader_test)
+        # Capa de salida
+        nn.Linear(64, 4)
+    )
 
-    evaluar_modelo_estricto(device, modelo, dataloader_test)
+    # Mover modelo a device
+    modelo.to(device)
+
+    # Llamar a función para entrenar modelo
+    entrenar_modelo(dataloader_train, dataloader_test,
+                    device, modelo, dataset_test.classes)
