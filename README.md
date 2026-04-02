@@ -16,4 +16,5 @@ https://www.kaggle.com/datasets/atikaakter11/brain-tumor-segmentation-dataset
   <br>
   <em>Figura 1: Muestra de una resonancia magnética cerebral (MRI).</em>
 </div>
+
 ## Clasificación
