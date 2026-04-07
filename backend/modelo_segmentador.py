@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 import os
 import segmentation_models_pytorch as smp
-import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -119,18 +118,49 @@ def calcular_iou(predicciones, mascaras_reales, umbral=0.5):
         return iou.item()
 
 
+# Función para calcular el coeficiente DICE
+def calcular_dice(predicciones, mascaras_reales, umbral=0.5, smooth=1e-6):
+    with torch.no_grad():
+        # Convertir a probabilidades y luego a binario
+        predicciones_binarias = (torch.sigmoid(predicciones) > umbral).float()
+
+        # Aplanar para el cálculo por píxel
+        pred_plana = predicciones_binarias.view(-1)
+        mask_plana = mascaras_reales.view(-1)
+
+        interseccion = (pred_plana * mask_plana).sum()
+        total = pred_plana.sum() + mask_plana.sum()
+
+        dice = (2. * interseccion + smooth) / (total + smooth)
+        return dice.item()
+
+
 # Función para entrenar modelo
 def entrenar_modelo(modelo):
     # Imágenes para train
     print(Fore.CYAN + "[*] " + Style.RESET_ALL, end='')
     print(f"Cargando y transformando máscaras e imágenes para segmentación")
     # Llamada para modelo de glioma
-    dataset_entrenamiento = cargar_imagenes('Masks/image/pituitary/',
-                                            'Masks/mask/pituitary/',
+    dataset_entrenamiento = cargar_imagenes('./Masks/image/train/pituitary/',
+                                            './Masks/mask/train/pituitary/',
                                             training=True)
 
     loader_entrenamiento = DataLoader(
         dataset_entrenamiento, batch_size=32, shuffle=True, num_workers=2)
+
+  # # BCEWithLogitsLoss para máscaras de 0s y 1s
+  #   criterion_dice = smp.losses.DiceLoss(mode='binary')
+  #   # Esta ya la tienes importada de torch.nn
+  #   criterion_bce = nn.BCEWithLogitsLoss()
+  #
+  #   # 2. Las sumamos (Hybrid Loss)
+  #   # Esto obliga al modelo a mirar el contorno (Dice) y el error píxel a píxel (BCE)
+  #   def loss_hibrida(y_pred, y_true):
+  #       return criterion_dice(y_pred, y_true) + criterion_bce(y_pred, y_true)
+  #
+  #   # 3. En tu función entrenar_modelo, asignas la nueva función
+  #   criterio = loss_hibrida
+
     # BCEWithLogitsLoss para máscaras de 0s y 1s
     criterio = nn.BCEWithLogitsLoss()
 
@@ -151,6 +181,7 @@ def entrenar_modelo(modelo):
         modelo.train()
         loss_acumulado = 0.0
         iou_acumulado = 0.0
+        dice_acumulado = 0.0
 
         barra_progreso = tqdm(loader_entrenamiento, desc=f"Época {
                               epoca+1}/{epocas}", unit="batch")
@@ -170,19 +201,21 @@ def entrenar_modelo(modelo):
 
             loss_acumulado += loss.item()
             iou_acumulado += iou_batch
+            dice_batch = calcular_dice(predicciones, mascaras_reales)
 
             barra_progreso.set_postfix({
                 'Loss': f"{loss.item():.4f}",
-                'IoU': f"{iou_batch:.4f}"
+                'IoU': f"{iou_batch:.4f}",
+                'Dice': f"{dice_batch:.4f}"
             })
 
         # Resultados de la época
         loss_promedio = loss_acumulado / len(loader_entrenamiento)
         iou_promedio = iou_acumulado / len(loader_entrenamiento)
+        dice_promedio = dice_acumulado / len(loader_entrenamiento)
 
-        print(Fore.GREEN + "[-] " + Style.RESET_ALL, end='')
-        print(f"Fin Época {epoca+1} | Loss: {
-              loss_promedio:.4f} | IoU: {iou_promedio:.4f}")
+        print(Fore.GREEN + "[-] " + Style.RESET_ALL +
+              f"Fin época {epoca+1} | Loss: {loss_promedio:.4f} | IoU: {iou_promedio:.4f} | Dice: {dice_promedio:.4f}")
 
         scheduler.step(loss_promedio)
 
@@ -214,3 +247,11 @@ if __name__ == '__main__':
 
     # Función para cargar imágenes
     entrenar_modelo(modelo)
+
+#
+# ========================================
+# RESULTADOS FINALES - ./MEJOR_MODELO.PTH
+# ========================================
+# Mean Dice Coefficient: 0.8875
+# Mean IoU (Jaccard):    0.8109
+# ========================================
