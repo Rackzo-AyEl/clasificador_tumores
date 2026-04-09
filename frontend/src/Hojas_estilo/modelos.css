@@ -1,0 +1,134 @@
+.contenedor-demo {
+  width: 100%;
+  max-width: 830px;
+  /* Un poco más de espacio para que los botones respiren */
+  min-height: 500px;
+  /* Cambiado a min-height para que crezca si el contenido lo requiere */
+
+  padding: 1.5rem;
+  margin-right: 1rem;
+  /* Centra el contenedor en la pantalla */
+
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+
+  background-color: #252323;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  /* Sombra para darle profundidad */
+}
+
+/* =========================================
+   PANELES (Izquierdo y Derecho)
+========================================= */
+.catalogo-imagenes,
+.contenedor-resultados {
+  width: 50%;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 2px dotted gainsboro;
+  /* Código simplificado */
+
+  display: flex;
+  flex-direction: column;
+  /* Apila los elementos de arriba a abajo */
+  gap: 1.5rem;
+  /* Espacio entre el título, la caja y los botones */
+}
+
+.titulo-panel {
+  color: gainsboro;
+  margin: 0;
+  text-align: center;
+  font-family: 'Fjalla One', sans-serif;
+  letter-spacing: 1px;
+}
+
+/* =========================================
+   CAJAS DE VISTA PREVIA (Donde irán las imágenes)
+========================================= */
+.vista-previa-caja {
+  flex-grow: 1;
+  /* Hace que esta caja tome todo el espacio sobrante verticalmente */
+  background-color: rgba(255, 255, 255, 0.05);
+  /* Un fondo gris casi transparente */
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* =========================================
+   GRUPOS DE BOTONES
+========================================= */
+.grupo-botones-entrada {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.grupo-botones-accion {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  /* Pone un botón a cada extremo */
+  margin-top: auto;
+  /* Empuja los botones al fondo del contenedor */
+}
+
+/* =========================================
+   ESTÉTICA DE BOTONES
+========================================= */
+button {
+  cursor: pointer;
+  padding: 0.8rem 1.2rem;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+/* Botones para seleccionar/cargar (Neutros) */
+.btn-secundario {
+  background-color: #4a5568;
+  color: white;
+  flex: 1;
+  /* Hacen que ambos botones midan lo mismo */
+}
+
+.btn-secundario:hover {
+  background-color: #2d3748;
+}
+
+/* Botón de Analizar (Llamativo, Acción principal) */
+.btn-primario {
+  background-color: #11D5EE;
+  /* Usando el azul que ya tienes en tu menú */
+  color: #1a202c;
+  flex: 2;
+  /* Lo hace más ancho para destacar */
+}
+
+.btn-primario:hover {
+  background-color: #0ebbd2;
+  transform: translateY(-2px);
+  /* Pequeño salto al pasar el mouse */
+}
+
+/* Botón de Limpiar (Peligro/Reset) */
+.btn-limpiar {
+  background-color: transparent;
+  color: #fc8181;
+  border: 1px solid #fc8181;
+  flex: 1;
+}
+
+.btn-limpiar:hover {
+  background-color: rgba(252, 129, 129, 0.1);
+}

@@ -1,5 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Fjalla+One&family=Inconsolata:wght@200..900&display=swap');
+
 .App {
-  background-color: white;
+  display: grid;
+  place-items: center;
+
+}
+
+h1,
+h2,
+h3 {
+  color: #2c3e50;
+  font-family: 'Fjalla One', sans-serif;
+  font-weight: 400;
+}
+
+p {
+  font-family: 'Calibri', 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #4a5568;
 }
 
 .contenedor-titulo {
@@ -13,14 +31,12 @@
   font-size: xx-large;
 }
 
-
 .contenedor-navegacion {
   height: 50px;
   width: 90%;
-
   margin: 2vw 5% 0px 5%;
 
-  background-color: #11D5EE;
+  background-color: black;
   border-radius: 10px;
 
   display: flex;
@@ -28,16 +44,27 @@
   justify-content: center;
   flex-direction: row;
   gap: 10vw;
+  max-width: 850px;
 }
 
 .contenedor-navegacion h2 {
+  cursor: pointer;
   margin: 0;
 
-  background-color: gainsboro;
-  color: darkblue;
+  color: white;
 }
 
 .contenedor-navegacion h2:hover {
-  color: green;
+  color: #05B0B0;
   transition: 0.3s;
+}
+
+.contenedor-principal {
+  width: 90%;
+
+  padding: 2rem;
+  max-width: 900px;
+
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }

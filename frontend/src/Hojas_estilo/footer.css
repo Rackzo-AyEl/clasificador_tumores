@@ -1,16 +1,13 @@
 .footer-container {
   background-color: #f9f9f9;
-  /* Un gris muy claro */
   border-top: 1px solid #e0e0e0;
   padding: 2rem 1rem;
   margin-top: 3rem;
-  /* Espacio para que no esté pegado al contenido */
   color: #666;
   font-family: 'Inter', sans-serif;
 }
 
 .footer-content {
-  max-width: 900px;
   margin: 0 auto;
   text-align: center;
 }
@@ -20,7 +17,6 @@
   line-height: 1.5;
   margin-bottom: 1rem;
   text-align: justify;
-  /* Le da un aire de documento oficial */
 }
 
 .copyright {
@@ -28,7 +24,6 @@
   opacity: 0.8;
 }
 
-/* Si usas modo oscuro en tu Arch, ajusta los colores: */
 @media (prefers-color-scheme: dark) {
   .footer-container {
     background-color: #1a1a1a;

@@ -25,12 +25,12 @@ function App() {
   return (
     <div className='App'>
       <div className='contenedor-titulo'>
-        <h1 className='titulo-principal'>Clasificación y segmentación de tumores cerebrales</h1>
+        <h1 className='titulo-principal' style={{ fontWeight: 'bold' }}>Clasificación y segmentación de tumores cerebrales</h1>
       </div>
       <div className='contenedor-navegacion'>
         <h2 onClick={() => setSeccion('inicio')}>Inicio</h2>
-        <h2 onClick={() => setSeccion('teoria')}>Tumores cerebrales</h2>
-        <h2 onClick={() => setSeccion('modelos')}>Modelos y metodología</h2>
+        <h2 onClick={() => setSeccion('teoria')}>Teoría y metodología</h2>
+        <h2 onClick={() => setSeccion('modelos')}>Demo</h2>
         <h2 onClick={() => setSeccion('enlaces')}>Repositorio</h2>
       </div>
 
