@@ -1,9 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Fjalla+One&family=Inconsolata:wght@200..900&display=swap');
 
-.App {
-  display: grid;
-  place-items: center;
+body {
+  margin: 0;
+  background-color: #f4f4f9;
+}
 
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 h1,
@@ -21,37 +27,41 @@ p {
 }
 
 .contenedor-titulo {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  padding: 2rem 0;
+  background-color: black;
 }
 
 .contenedor-titulo h1 {
   font-family: Georgia, 'Times New Roman', Times, serif;
-  font-size: xx-large;
+  font-size: 3rem;
+  margin: 0;
+  color: white;
 }
 
 .contenedor-navegacion {
   height: 50px;
-  width: 90%;
-  margin: 2vw 5% 0px 5%;
+  width: 100%;
 
   background-color: black;
-  border-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: row;
-  gap: 10vw;
-  max-width: 850px;
+  gap: 4vw;
 }
 
 .contenedor-navegacion h2 {
   cursor: pointer;
   margin: 0;
-
   color: white;
+  font-size: 1.2rem;
 }
 
 .contenedor-navegacion h2:hover {
@@ -59,12 +69,98 @@ p {
   transition: 0.3s;
 }
 
+
+.layout-cuerpo {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+
+  width: 95%;
+  max-width: 1500px;
+  margin: 2rem auto;
+}
+
+.contenedor-indice {
+  width: 250px;
+  flex-shrink: 0;
+
+  position: sticky;
+  top: 2rem;
+
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.grupo-indice {
+  margin-bottom: 1.5rem;
+}
+
+.grupo-indice h4 {
+  margin: 0 0 0.5rem 0;
+  cursor: pointer;
+  font-family: 'Fjalla One', sans-serif;
+  color: #4a5568;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.grupo-indice h4:hover {
+  color: #11D5EE;
+}
+
+.grupo-indice h4.seccion-activa {
+  color: #11CFD6;
+  border-left: 3px solid #11CFD6;
+  padding-left: 8px;
+}
+
+.grupo-indice ul {
+  list-style: none;
+  padding: 0 0 0 1rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.grupo-indice a {
+  text-decoration: none;
+  color: #718096;
+  font-family: 'Calibri', 'Arial', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.grupo-indice a:hover {
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+.header-indice {
+  border-bottom: 3px solid #11D5EE;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .contenedor-principal {
-  width: 90%;
+  flex-grow: 1;
+  width: 100%;
+  min-width: 0;
 
   padding: 2rem;
-  max-width: 900px;
-
+  background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1024px) {
+  .contenedor-indice {
+    display: none;
+  }
+
+  .layout-cuerpo {
+    width: 95%;
+  }
 }

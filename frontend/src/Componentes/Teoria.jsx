@@ -1,7 +1,7 @@
 function Teoria() {
   return (
     <div className='contenedor_contenido'>
-      <h1>¿Qué es un tumor cerebral?</h1>
+      <h1 id='tumores-teoria'>¿Qué es un tumor cerebral?</h1>
       <p>
         De acuerdo con el NIH (National Institute of Neurological Disorders and Stroke), un tumor
         es una masa sólida que se forma cuando las células crecen y se dividen más de lo debido, o no mueren cuando
@@ -17,7 +17,7 @@ function Teoria() {
         sistema de clasificación son: glioma, meningioma y tumores de la glándula pituitaria.
       </p>
 
-      <h2>Glioma</h2>
+      <h2 id='glioma'>Glioma</h2>
       <p>
         Este tipo de tumor se origina en las células gliales, que son las células de soporte del cerebro.
         El mayor desafío clínico del glioma es su naturaleza infiltrante, pues sus células tienden a mezclarse y diseminarse entre el tejido cerebral sano.
@@ -31,13 +31,13 @@ function Teoria() {
           alt='Imagen MRI glioma'
           style={{
             width: '50%',
-            maxWidth: 500,
+            maxWidth: 300,
             borderRadius: 15
           }}
         />
       </div>
 
-      <h2>Meningioma</h2>
+      <h2 id='meningioma'>Meningioma</h2>
       <p>Un meningioma es un tumor que inicia en las meninges, las cuales son las capas de membranas de tejido que envuelven y protegen el sistema nervioso central, incluyendo el cerebro. La mayoría de meningiomas crecen lentamente, pueden no causar síntomas en muchos años, pero si crecen demasiado o se sitúan cerca de áreas importantes pueden causar grandes afectaciones a la salud.</p>
       <p>Los meningiomas se presentan con más frecuencia en mujeres y en personas de edad avanzada, pero generalmente pueden presentarse a cualquier edad.</p>
       <p>Alrededor del 80% de meningiomas son benignos, por lo que no suelen representar cáncer, sin embargo es importante mantener un buen diagnóstico y monitoreo con escaneos regulares en caso de presencia de tumor.</p>
@@ -48,13 +48,13 @@ function Teoria() {
           alt='Imagen MRI meningioma'
           style={{
             width: '50%',
-            maxWidth: 500,
+            maxWidth: 300,
             borderRadius: 15
           }}
         />
       </div>
 
-      <h2>Pituitaria</h2>
+      <h2 id='pituitaria'>Pituitaria</h2>
       <p>La glándula pituitaria (también llamada hipófisis) es una glándula endocrina ubicada justo debajo del hipotálamo, esta regula los procesos como el crecimiento y el metabolismo.
         El tumor de hipófisis en la mayoría de los casos (como el tumor de meningioma) es de crecimiento lento y suelen ser benignos, en baja frecuencia de casos se expande hacia estructuras vecinas. La aparición de estos tumores puede llegar a afectar a la producción de hormonas y glándulas.</p>
       <p> Algunos síntomas comúnes de este tumor son dolores de cabeza, alteración de visión, pérdida de vello corporal, disminución del impulso sexual. En las mujeres pueden presentarse períodos menstruales menos frecuentes, ausencia de menstruación o falta de leche en las mamas. En hombres puede notarse pérdida de vello facial, crecimiento del tejido de la mama o esterilidad.</p>
@@ -65,13 +65,13 @@ function Teoria() {
           alt='Imagen MRI pituitaria'
           style={{
             width: '50%',
-            maxWidth: 500,
+            maxWidth: 300,
             borderRadius: 15
           }}
         />
       </div>
 
-      <h1>Redes neuronales</h1>
+      <h1 id='redes-neuronales'>Redes neuronales</h1>
       <p>
         El aprendizaje profundo permite a las máquinas reconocer patrones complejos mediante redes neuronales multicapa,
         facilitando el análisis de grandes volúmenes de datos. Sin embargo, diseñar y entrenar una
@@ -96,7 +96,7 @@ function Teoria() {
       </div>
 
       <div className="bloque-arquitecturas">
-        <h1>Arquitecturas de aprendizaje profundo aplicadas</h1>
+        <h1 id='arquitecturas'>Arquitecturas de aprendizaje profundo aplicadas</h1>
         <p>
           Para abordar la complejidad de las imágenes médicas, este sistema divide el problema en dos tareas
           asignadas a redes neuronales especializadas: descubrir qué tipo de tumor está presente (clasificación) y
@@ -145,7 +145,7 @@ function Teoria() {
       </div>
 
       <div className="bloque-metodologia">
-        <h1>Metodología</h1>
+        <h1 id='metodologia'>Metodología</h1>
         <p>
           Para garantizar que las redes neuronales aprendan las características biológicas de los tumores y no memoricen
           imágenes específicas, el flujo de trabajo se divide en fases de preparación de datos y procesamiento de optimizado para un alto rendimiento.
@@ -183,7 +183,7 @@ function Teoria() {
         </p>
       </div>
 
-      <h1>Evaluación y resultados</h1>
+      <h1 id='evaluacion'>Evaluación y resultados</h1>
       <p>Cada modelo aplicado requiere de una evaluación para medir la fiabilidad de los resultados. Para tener una mayor seguridad de que los números obtenidos son realistas, por ello se ha hecho la evaluación sobre el conjunto de datos de prueba que se separó en la fase de preprocesamiento, así se evita tener fuga de datos que provoquen que a los modelos se les mida usando datos que hayan estudiado durante el entrenamiento.</p>
       <div className='contenedor_imagen'>
         <img

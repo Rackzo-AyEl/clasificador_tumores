@@ -1,40 +1,45 @@
+/* =========================================
+   CONTENEDOR PRINCIPAL DE LA DEMO
+========================================= */
 .contenedor-demo {
   width: 100%;
-  max-width: 830px;
-  /* Un poco más de espacio para que los botones respiren */
+  max-width: 95%;
   min-height: 500px;
-  /* Cambiado a min-height para que crezca si el contenido lo requiere */
-
-  padding: 1.5rem;
-  margin-right: 1rem;
-  /* Centra el contenedor en la pantalla */
 
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   gap: 2rem;
+
+  /* RECUPERANDO EL ESPACIADO CORRECTO */
+  padding: 2rem;
+  margin: 2rem auto;
+  /* Esto lo centra perfectamente en la pantalla */
 
   background-color: #252323;
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  /* Sombra para darle profundidad */
 }
 
 /* =========================================
-   PANELES (Izquierdo y Derecho)
+   ZONA SUPERIOR: VISUALIZACIÓN
 ========================================= */
-.catalogo-imagenes,
-.contenedor-resultados {
-  width: 50%;
+.area-visual {
+  display: flex;
+  gap: 2rem;
+  /* Recuperamos la separación entre las dos imágenes */
+  width: 100%;
+}
+
+.panel-imagen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  /* RECUPERANDO EL ESTILO DE PANEL QUE TENÍAS ANTES */
   padding: 1.5rem;
   border-radius: 10px;
   border: 2px dotted gainsboro;
-  /* Código simplificado */
-
-  display: flex;
-  flex-direction: column;
-  /* Apila los elementos de arriba a abajo */
-  gap: 1.5rem;
-  /* Espacio entre el título, la caja y los botones */
 }
 
 .titulo-panel {
@@ -45,83 +50,101 @@
   letter-spacing: 1px;
 }
 
-/* =========================================
-   CAJAS DE VISTA PREVIA (Donde irán las imágenes)
-========================================= */
 .vista-previa-caja {
-  flex-grow: 1;
-  /* Hace que esta caja tome todo el espacio sobrante verticalmente */
+  width: 100%;
+  aspect-ratio: 1 / 1;
   background-color: rgba(255, 255, 255, 0.05);
-  /* Un fondo gris casi transparente */
   border-radius: 8px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: #888;
   font-style: italic;
-  text-align: center;
-  padding: 1rem;
+  overflow: hidden;
 }
 
 /* =========================================
-   GRUPOS DE BOTONES
+   ZONA INFERIOR: CONTROLES
 ========================================= */
-.grupo-botones-entrada {
+.area-controles {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  /* RECUPERANDO EL ESTILO DE PANEL PARA LOS CONTROLES */
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 2px dotted gainsboro;
 }
 
-.grupo-botones-accion {
+/* Barra de Probabilidad */
+.barra-probabilidad-contenedor {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
+  /* Transición suave */
+}
+
+.etiquetas-probabilidad {
+  display: flex;
   justify-content: space-between;
-  /* Pone un botón a cada extremo */
-  margin-top: auto;
-  /* Empuja los botones al fondo del contenedor */
+  color: gainsboro;
+  font-family: 'Calibri', 'Arial', sans-serif;
+  font-size: 1.1rem;
+}
+
+.etiquetas-probabilidad strong {
+  color: #11D5EE;
+}
+
+.probabilidad-fondo {
+  width: 100%;
+  height: 12px;
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.probabilidad-lleno {
+  height: 100%;
+  background-color: #11D5EE;
+  border-radius: 10px;
+  transition: width 0.5s ease-in-out;
 }
 
 /* =========================================
    ESTÉTICA DE BOTONES
 ========================================= */
+.grupo-botones-general {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  /* Para que los botones se distribuyan bien */
+}
+
 button {
   cursor: pointer;
-  padding: 0.8rem 1.2rem;
+  padding: 0.8rem 1rem;
   border-radius: 6px;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   border: none;
   transition: all 0.3s ease;
 }
 
-/* Botones para seleccionar/cargar (Neutros) */
 .btn-secundario {
   background-color: #4a5568;
   color: white;
   flex: 1;
-  /* Hacen que ambos botones midan lo mismo */
 }
 
 .btn-secundario:hover {
   background-color: #2d3748;
 }
 
-/* Botón de Analizar (Llamativo, Acción principal) */
-.btn-primario {
-  background-color: #11D5EE;
-  /* Usando el azul que ya tienes en tu menú */
-  color: #1a202c;
-  flex: 2;
-  /* Lo hace más ancho para destacar */
-}
-
-.btn-primario:hover {
-  background-color: #0ebbd2;
-  transform: translateY(-2px);
-  /* Pequeño salto al pasar el mouse */
-}
-
-/* Botón de Limpiar (Peligro/Reset) */
 .btn-limpiar {
   background-color: transparent;
   color: #fc8181;
@@ -131,4 +154,133 @@ button {
 
 .btn-limpiar:hover {
   background-color: rgba(252, 129, 129, 0.1);
+}
+
+.btn-primario {
+  background-color: #11D5EE;
+  color: #1a202c;
+  flex: 2;
+}
+
+.btn-primario:hover {
+  background-color: #0ebbd2;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   MODAL DE CATÁLOGO
+========================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-contenido {
+  background-color: #252323;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid #4a5568;
+}
+
+.modal-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #4a5568;
+  padding-bottom: 1rem;
+}
+
+.modal-cabecera h3 {
+  color: gainsboro;
+  margin: 0;
+  font-family: 'Fjalla One', sans-serif;
+}
+
+.btn-cerrar-modal {
+  background-color: transparent;
+  color: gainsboro;
+  font-size: 1.2rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}
+
+.btn-cerrar-modal:hover {
+  background-color: #fc8181;
+  color: white;
+}
+
+.grid-catalogo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.5rem;
+}
+
+.tarjeta-catalogo {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.tarjeta-catalogo:hover {
+  transform: translateY(-5px);
+}
+
+.contenedor-img-catalogo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: border 0.2s ease;
+}
+
+.tarjeta-catalogo:hover .contenedor-img-catalogo {
+  border: 2px solid #11D5EE;
+}
+
+.contenedor-img-catalogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.etiqueta-clase {
+  color: #a0aec0;
+  font-family: 'Calibri', 'Arial', sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.tarjeta-catalogo:hover .etiqueta-clase {
+  color: white;
+}
+
+/* =========================================
+   RESPONSIVO
+========================================= */
+@media (max-width: 768px) {
+  .area-visual {
+    flex-direction: column;
+  }
+
+  .grupo-botones-general {
+    flex-wrap: wrap;
+  }
 }
