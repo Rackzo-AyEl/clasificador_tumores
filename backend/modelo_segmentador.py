@@ -148,19 +148,6 @@ def entrenar_modelo(modelo):
     loader_entrenamiento = DataLoader(
         dataset_entrenamiento, batch_size=32, shuffle=True, num_workers=2)
 
-  # # BCEWithLogitsLoss para máscaras de 0s y 1s
-  #   criterion_dice = smp.losses.DiceLoss(mode='binary')
-  #   # Esta ya la tienes importada de torch.nn
-  #   criterion_bce = nn.BCEWithLogitsLoss()
-  #
-  #   # 2. Las sumamos (Hybrid Loss)
-  #   # Esto obliga al modelo a mirar el contorno (Dice) y el error píxel a píxel (BCE)
-  #   def loss_hibrida(y_pred, y_true):
-  #       return criterion_dice(y_pred, y_true) + criterion_bce(y_pred, y_true)
-  #
-  #   # 3. En tu función entrenar_modelo, asignas la nueva función
-  #   criterio = loss_hibrida
-
     # BCEWithLogitsLoss para máscaras de 0s y 1s
     criterio = nn.BCEWithLogitsLoss()
 
@@ -248,10 +235,3 @@ if __name__ == '__main__':
     # Función para cargar imágenes
     entrenar_modelo(modelo)
 
-#
-# ========================================
-# RESULTADOS FINALES - ./MEJOR_MODELO.PTH
-# ========================================
-# Mean Dice Coefficient: 0.8875
-# Mean IoU (Jaccard):    0.8109
-# ========================================

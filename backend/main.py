@@ -27,10 +27,11 @@ segmentadores = {
     "Pituitaria": ort.InferenceSession("./Modelos/segmentador_pituitary.onnx")
 }
 
-CLASES = ["Glioma", "Meningioma", "Pituitaria", "Sano"]
+CLASES = ["Glioma", "Sano", "Meningioma", "Pituitaria"]
+
 
 # =========================================================
-# 2. FUNCIONES DE PREPROCESAMIENTO
+# Funciones de preprocesamiento
 # =========================================================
 def preprocesar_imagen(img_pil):
     img = img_pil.convert("RGB").resize((224, 224))
@@ -65,8 +66,9 @@ def softmax(x):
     e_x = np.exp(x - np.max(x, axis=1, keepdims=True))
     return e_x / e_x.sum(axis=1, keepdims=True)
 
+
 # =========================================================
-# 3. EL ENDPOINT PRINCIPAL
+# Endpoint principal
 # =========================================================
 @app.post('/procesar-mri/')
 async def procesar_imagen(imagen: UploadFile = File(...)):
@@ -83,7 +85,7 @@ async def procesar_imagen(imagen: UploadFile = File(...)):
         clase_predicha = CLASES[indice_ganador]
         confianza = round(float(probabilidades[0][indice_ganador] * 100), 2)
         
-        print(f"🧠 Detección: {clase_predicha} al {confianza}%")
+        print(f"Detección: {clase_predicha} al {confianza}%")
 
         mascara_b64 = ""
         
@@ -109,7 +111,7 @@ async def procesar_imagen(imagen: UploadFile = File(...)):
             print("Input shape esperado:", modelo_unet.get_inputs()[0].shape)
 
         else:
-            print("🟢 Paciente Sano. Se omite la segmentación.")
+            print("Paciente sano. Se omite la segmentación.")
 
         return {
             "clase": clase_predicha,
@@ -118,7 +120,7 @@ async def procesar_imagen(imagen: UploadFile = File(...)):
         }
 
     except Exception as e:
-        print(f"❌ Error interno procesando la imagen: {e}")
+        print(f"Error interno procesando la imagen: {e}")
         traceback.print_exc() 
         return {
             "clase": "Error",

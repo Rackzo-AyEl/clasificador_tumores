@@ -26,7 +26,18 @@ function Inicio() {
       </div>
 
       <h1>Muestras de ejecución</h1>
-      <p>*APLICAR IMÁGENES DE MUESTRA*</p>
+      <p>Las siguientes imágenes reflejan el resultado esperado al usar los modelos de visión artificial. Se genera una máscara binaria donde los píxeles negros muestran área sana sin tumores, mientras que los píxeles blancos muestran el área de los tumores. Esto se aplica para cada clase de tumor, mientras que en la clasificación de cerebros sanos no se hace ninguna máscara, pues no se requiere dibujar ninguna zona afectada.</p>
+      <div className='contenedor_imagen'>
+        <img
+          src={require('../Imagenes/muestra_1.png')}
+          alt='Imagen de muestra de ejecución'
+          style={{ padding: '20px' }}
+        />
+        <img
+          src={require('../Imagenes/muestra_2.png')}
+          alt='Imagen de muestra de ejecución'
+        />
+      </div>
     </div>
   )
 }

@@ -74,7 +74,7 @@ function App() {
             onClick={() => setSeccion('enlaces')}
             className={seccion === 'enlaces' ? 'seccion-activa' : ''}
           >
-            Repositorio y enlaces
+            Enlaces
           </h4>
         </div>
 
@@ -92,7 +92,7 @@ function App() {
         <h2 onClick={() => setSeccion('inicio')}>Inicio</h2>
         <h2 onClick={() => setSeccion('teoria')}>Teoría y metodología</h2>
         <h2 onClick={() => setSeccion('modelos')}>Demo</h2>
-        <h2 onClick={() => setSeccion('enlaces')}>Repositorio</h2>
+        <h2 onClick={() => setSeccion('enlaces')}>Enlaces</h2>
       </div>
 
       <div className='layout-cuerpo'>
