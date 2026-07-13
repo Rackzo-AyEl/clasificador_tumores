@@ -213,4 +213,3 @@ Clasificacion_tumores/
 ---
 
 Proyecto desarrollado con fines de investigación y aprendizaje en visión computacional aplicada al análisis de imágenes médicas.
-````
