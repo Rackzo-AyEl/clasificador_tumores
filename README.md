@@ -28,14 +28,14 @@ Los modelos de inteligencia artificial se descargan de forma dinámica desde Hug
 ### Requisitos
 * Tener instalado [Docker](https://docs.docker.com/get-docker/)
 
-### ⚡ Instrucciones de Ejecución
+### Instrucciones de ejecución
 
 1. Clonar este repositorio en la máquina local:
    ```bash
    git clone [https://github.com/tu-usuario/Clasificacion_tumores.git](https://github.com/tu-usuario/Clasificacion_tumores.git)
    cd Clasificacion_tumores
 
-2. Generar imagen en el sistema:
+2. Generar imagen en el sistema, este proceso puede demorar debido a la descarga de los modelos y pesos desde Hugging Face:
    ``` bash
    docker compose up --build
 
