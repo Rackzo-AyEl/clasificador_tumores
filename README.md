@@ -1,50 +1,232 @@
+````markdown
 # Clasificador y segmentador de tumores cerebrales
-En este proyecto se buscan métodos confiables para trabajar sobre visión artificial con imágenes médicas que requieren una alta precisión y confiabilidad para la clasificación y segmentación de tumores cerebrales usando MRI (Imágenes de resonancia magnética) entre 4 clases diferentes (healthy, glioma, meningioma, potuitary).
-Las redes propuestas sobre este trabajo son MLP (perceptrón multicapa) junto a ResNet50 para clasificación y U-Net con EfficientNet para la segmentación. Aquí se aprovecha el uso de transferencia de aprendizaje y fine-tuning para mejorar los resultados de precisión y reducir tiempos de entrenamiento.
-
-## Conjunto de datos
-Se usaron dos conjuntos de datos diferentes, uno para clasificación y otro para segmentación, esto se hizo para tener más variabilidad de los datos en los entrenamientos.
-El dataset para clasificación se separó en 70% para entrenamiento, 15% para validación y 15% para prueba. Este se extrajo de la siguiente página:
-https://www.kaggle.com/datasets/tombackert/brain-tumor-mri-data
-<br>
-El dataset usado para segmentación es perfecto para este caso debido a que tiene muestras de las mismas clases para clasificación y además incluye las máscaras de tumores para que la red neuronal aprenda a reconocer los tumores cerebrales. Este se extrajo de la siguiente página:
-https://www.kaggle.com/datasets/atikaakter11/brain-tumor-segmentation-dataset
-<br>
 
 <div align="center">
-  <img src="https://www.kenhub.com/thumbor/zoz_XVCq44UFroH2ds6eoOUvdtA=/fit-in/800x1600/filters:watermark(/images/logo_url.png,-10,-10,0):background_color(FFFFFF):format(jpeg)/images/library/13517/ff.jpg" width="300" alt="Muestra de una imagen de resonancia magnética cerebral">
-  <br>
-  <em>Figura 1: Muestra de una resonancia magnética cerebral (MRI).</em>
+
+# Tecnologías
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
+![ONNX](https://img.shields.io/badge/ONNX-005CED?style=for-the-badge&logo=onnx&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
 </div>
+
+---
+
+## Descripción
+
+Este proyecto implementa un sistema basado en inteligencia artificial para la clasificación y segmentación de tumores cerebrales a partir de imágenes de resonancia magnética (MRI).
+
+El modelo de clasificación es capaz de identificar cuatro estados clínicos:
+
+- Sano
+- Glioma
+- Meningioma
+- Tumor de pituitaria
+
+Además, el sistema genera una máscara de segmentación que localiza visualmente la región del tumor dentro de la imagen.
+
+---
+
+# Arquitectura del proyecto
+
+Las redes neuronales fueron desarrolladas utilizando técnicas de transfer learning y fine-tuning, permitiendo obtener mejores métricas de desempeño y reducir considerablemente el tiempo de entrenamiento.
 
 ## Clasificación
 
+- Backbone: ResNet50
+- Clasificador: Perceptrón multicapa (MLP)
 
-## Despliegue con Docker
-Este proyecto está contenido utilizando Docker, lo que permite levantar el frontend en React y la API de FastAPI en servicios aislados con un solo comando.
+## Segmentación
 
-Los modelos de inteligencia artificial se descargan de forma dinámica desde Hugging Face Hub durante el arranque del contenedor, eliminando la necesidad de configurar pesos locales.
+- Arquitectura: U-Net
+- Encoder: EfficientNet
 
-### Requisitos
-* Tener instalado [Docker](https://docs.docker.com/get-docker/)
+---
 
-### Instrucciones de ejecución
+# Conjunto de datos
 
-1. Clonar este repositorio en la máquina local:
-   ```bash
-   git clone https://github.com/Rackzo-AyEl/clasificador_tumores.git
-   cd Clasificacion_tumores
+Se emplearon dos datasets independientes para mejorar la capacidad de generalización del sistema.
 
-2. Generar imagen en el sistema, este proceso puede demorar debido a la descarga de los modelos y pesos desde Hugging Face:
-   ``` bash
-   docker compose up --build
+## Clasificación
 
-Con esto hecho, el sistema estará operativo en las siguientes rutas locales:
+**Brain Tumor MRI Data**
 
-Interfaz web (React): http://localhost:3000
+https://www.kaggle.com/datasets/tombackert/brain-tumor-mri-data
 
-Documentación Interactiva de la API (Swagger UI): http://localhost:8000/docs
+División del conjunto de datos:
 
-Para detener los contenedores, se debe correr el comando:
+- 70% Entrenamiento
+- 15% Validación
+- 15% Prueba
+
+---
+
+## Segmentación
+
+**Brain Tumor Segmentation Dataset**
+
+https://www.kaggle.com/datasets/atikaakter11/brain-tumor-segmentation-dataset
+
+Este conjunto incluye:
+
+- Imágenes MRI
+- Máscaras binarias (Ground Truth)
+
+Las máscaras permiten que la red aprenda la morfología exacta del tumor.
+
+---
+
+<div align="center">
+
+<img src="https://www.kenhub.com/thumbor/zoz_XVCq44UFroH2ds6eoOUvdtA=/fit-in/800x1600/filters:watermark(/images/logo_url.png,-10,-10,0):background_color(FFFFFF):format(jpeg)/images/library/13517/ff.jpg" width="320">
+
+**Figura 1.** Ejemplo de una resonancia magnética cerebral.
+
+</div>
+
+---
+
+# Despliegue
+
+El proyecto se encuentra contenido con Docker, permitiendo ejecutar tanto el frontend como el backend mediante un único comando.
+
+## Arquitectura
+
+- Frontend → React
+- Backend → FastAPI
+- Modelos → ONNX Runtime
+- Contenedores → Docker Compose
+
+> **Nota:** Los modelos `.onnx` no se almacenan dentro del repositorio. Durante el arranque del contenedor del backend se descargan automáticamente desde **Hugging Face Hub**, para mantener la imagen ligera.
+
+---
+
+# Requisitos
+
+- Docker
+- Docker Compose
+
+---
+
+# Ejecución
+
+## 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/Rackzo-AyEl/clasificador_tumores.git
+cd clasificador_tumores
+```
+
+## 2. Construir los contenedores
+
+La primera ejecución descargará los modelos desde Hugging Face, por lo que puede demorar en iniciar la primera vez.
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Acceder a la aplicación
+
+Una vez iniciado el sistema:
+
+| Servicio | Dirección |
+|----------|-----------|
+| Frontend | http://localhost:3000 |
+| Swagger UI | http://localhost:8000/docs |
+
+---
+
+## Reiniciar posteriormente
+
+```bash
+docker compose up
+```
+
+---
+
+## Detener el sistema
+
 ```bash
 docker compose down
+```
+
+---
+
+# 📂 Estructura del Proyecto
+
+```text
+Clasificacion_tumores/
+│
+├── Entrenamiento/
+│   ├── notebooks/
+│   ├── entrenamiento_clasificacion/
+│   └── entrenamiento_segmentacion/
+│
+├── backend/
+│   ├── app/
+│   ├── modelos/
+│   ├── Dockerfile
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── Dockerfile
+│   └── package.json
+│
+├── docker-compose.yml
+├── README.md
+└── .gitignore
+```
+
+---
+
+# Flujo del Sistema
+
+```text
+                 MRI
+                  │
+                  ▼
+        ┌─────────────────┐
+        │    Frontend     │
+        │      React      │
+        └────────┬────────┘
+                 │
+                 ▼
+        ┌─────────────────┐
+        │ FastAPI Backend │
+        └────────┬────────┘
+                 │
+        ┌────────┴────────┐
+        ▼                 ▼
+ Clasificación      Segmentación
+ (ResNet50+MLP)     (U-Net + EfficientNet)
+        │                 │
+        └────────┬────────┘
+                 ▼
+        Resultado + Máscara
+```
+
+---
+
+# ✨ Características
+
+- Clasificación de tumores cerebrales en cuatro clases.
+- Segmentación automática del tumor.
+- Transfer Learning y Fine-Tuning.
+- Inferencia acelerada mediante ONNX Runtime.
+- Backend desarrollado con FastAPI.
+- Frontend desarrollado en React.
+- Contenedorización completa con Docker.
+- Descarga automática de modelos desde Hugging Face.
+
+---
+
+Proyecto desarrollado con fines de investigación y aprendizaje en visión computacional aplicada al análisis de imágenes médicas.
+````
