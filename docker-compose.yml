@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend-api:
+    build: ./backend
+    container_name: mri_backend_container
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend-web:
+    build: ./frontend
+    container_name: mri_frontend_container
+    ports:
+      - "3000:3000"
+    environment:
+      - WDS_SOCKET_PORT=0
+    stdin_open: true
+    depends_on:
+      - backend-api
+    restart: unless-stopped
