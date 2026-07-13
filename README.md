@@ -1,20 +1,4 @@
-````markdown
 # Clasificador y segmentador de tumores cerebrales
-
-<div align="center">
-
-# Tecnologías
-
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
-![ONNX](https://img.shields.io/badge/ONNX-005CED?style=for-the-badge&logo=onnx&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-
-</div>
-
----
 
 ## Descripción
 
@@ -158,7 +142,7 @@ docker compose down
 
 ---
 
-# 📂 Estructura del Proyecto
+# Estructura del proyecto
 
 ```text
 Clasificacion_tumores/
@@ -187,7 +171,7 @@ Clasificacion_tumores/
 
 ---
 
-# Flujo del Sistema
+# Flujo del sistema
 
 ```text
                  MRI
@@ -215,7 +199,7 @@ Clasificacion_tumores/
 
 ---
 
-# ✨ Características
+# Características
 
 - Clasificación de tumores cerebrales en cuatro clases.
 - Segmentación automática del tumor.
