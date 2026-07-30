@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 import traceback
+import os
+from huggingface_hub import hf_hub_download
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
@@ -18,6 +20,23 @@ app.add_middleware(
     allow_headers=["*"], 
 )
 
+def descargar_modelos():
+    repo_id = "Rackzo-AyEl/Clasificador_tumores"
+    modelos = [
+        "clasificador_resnet50.onnx",
+        "segmentador_glioma.onnx",
+        "segmentador_meningioma.onnx",
+        "segmentador_pituitary.onnx"
+    ]
+    os.makedirs("./Modelos", exist_ok=True)
+    for modelo in modelos:
+        ruta_modelo = os.path.join("./Modelos", modelo)
+        if not os.path.exists(ruta_modelo):
+            print(f"Descargando {modelo}...")
+            hf_hub_download(repo_id=repo_id, filename=modelo, local_dir="./Modelos")
+
+print("Verificando modelos...")
+descargar_modelos()
 print("Cargando motores ONNX en memoria...")
 clasificador = ort.InferenceSession("./Modelos/clasificador_resnet50.onnx")
 
