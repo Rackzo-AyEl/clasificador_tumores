@@ -199,6 +199,12 @@ Clasificacion_tumores/
 
 ---
 
+# Captura de Ejecución
+
+![Ejecución del sistema](./muestra_ejecucion.png)
+
+---
+
 # Características
 
 - Clasificación de tumores cerebrales en cuatro clases.
