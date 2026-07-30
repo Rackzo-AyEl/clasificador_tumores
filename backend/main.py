@@ -35,9 +35,10 @@ def descargar_modelos():
             print(f"Descargando {modelo}...")
             hf_hub_download(repo_id=repo_id, filename=modelo, local_dir="./Modelos")
 
-print("Verificando modelos...")
+print("Verificando modelos...", flush=True)
 descargar_modelos()
-print("Cargando motores ONNX en memoria...")
+print("Modelos verificados o descargados.", flush=True)
+print("Cargando motores ONNX en memoria...", flush=True)
 clasificador = ort.InferenceSession("./Modelos/clasificador_resnet50.onnx")
 
 segmentadores = {
